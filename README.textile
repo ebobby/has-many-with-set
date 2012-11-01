@@ -1,0 +1,4 @@
+
+h1. has-many-with-sets
+
+h3. A smarter way of doing many-to-many relationships in Ruby On Rails.
