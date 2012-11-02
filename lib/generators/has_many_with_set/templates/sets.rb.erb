@@ -1,13 +1,13 @@
 <% set_items_table = "#{ child.singularize }_sets_#{ child.singularize }".tableize %><% set_table = "#{ child.singularize }_sets".tableize %>
-class <%= set_items_table.classify %>Migration < ActiveRecord::Migration
+class <%= "Create#{ child.classify.singularize }Set" %> < ActiveRecord::Migration
   def change
     create_table :<%= set_table %> do |t|
       t.timestamps
     end
 
     create_table :<%= set_items_table %> do |t|
-      t.references :<%= set_table.singularize %>
-      t.references :<%= child.tableize.singularize.downcase %>
+      t.references :<%= set_table.singularize %>, :null => false
+      t.references :<%= child.tableize.singularize.downcase %>, :null => false
     end
 
     add_column :<%= parent.tableize %>, :<%= set_table.singularize %>_id, :integer
