@@ -25,7 +25,7 @@ module HasManyWithSet
         set = nil
         values = instance_variable_get(instance_var_name)
 
-        if values.empty?
+        if values.blank?
           set = klass.find_by_sql(empty_set_query).first
 
           if set.nil?
