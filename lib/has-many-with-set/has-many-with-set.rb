@@ -21,6 +21,7 @@ module HasManyWithSet
 
     setter_method_name              = "#{ child_table_name }="
     initialize_callback_method_name = "#{ set_items_table_name }_initialize_callback"
+    save_callback_method_name       = "#{ set_items_table_name }_save_callback"
 
     define_method(child_table_name,
                   Accessors.build_getter_method(instance_var_name))
@@ -31,10 +32,16 @@ module HasManyWithSet
     define_method(initialize_callback_method_name,
                   Callbacks.build_loader_callback(instance_var_name, child_table_name, set_table_name))
 
+    define_method(save_callback_method_name,
+                  Callbacks.build_saver_callback(set_table_name, set_items_table_name,
+                                                 child_table_name, instance_var_name))
+
     class_eval do
       private initialize_callback_method_name
+      private save_callback_method_name
 
       after_initialize initialize_callback_method_name
+      before_save save_callback_method_name
     end
   end
 end
