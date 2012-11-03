@@ -5,7 +5,11 @@ module HasManyWithSet
     end
 
     def self.build_setter_method (instance_var_name)
-      Proc.new { |elements| instance_variable_set(instance_var_name, elements) }
+      Proc.new { |elements|
+        elements = [] if elements.nil?
+        instance_variable_set(instance_var_name,
+                              elements.is_a?(Array) ? elements : [ elements ])
+      }
     end
   end
 end
