@@ -7,6 +7,7 @@ require "has-many-with-set/has-many-with-set"
 require "has-many-with-set/relationships"
 require "has-many-with-set/queries"
 require "has-many-with-set/accessors"
+require "has-many-with-set/callbacks"
 
 module HasManyWithSet
 end
