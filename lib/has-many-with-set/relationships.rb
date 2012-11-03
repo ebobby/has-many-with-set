@@ -5,6 +5,8 @@ module HasManyWithSet
 
       Object.const_set(set_model_name, Class.new(ActiveRecord::Base)) unless
         Object.const_defined?(set_model_name) # this *should* never happen...
+
+      set_model_name
     end
 
     def relate_child_to_set (child_model_name)

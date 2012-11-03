@@ -6,6 +6,7 @@ $LOAD_PATH.unshift(File.dirname(__FILE__))
 require "has-many-with-set/has-many-with-set"
 require "has-many-with-set/relationships"
 require "has-many-with-set/queries"
+require "has-many-with-set/accessors"
 
 module HasManyWithSet
 end
