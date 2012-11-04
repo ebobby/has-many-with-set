@@ -7,8 +7,18 @@ module HasManyWithSet
     def self.build_setter_method (instance_var_name)
       Proc.new { |elements|
         elements = [] if elements.nil?
-        instance_variable_set(instance_var_name,
-                              elements.is_a?(Array) ? elements : [ elements ])
+
+        unless elements.is_a? Array
+          if elements.respond_to?(:is_a)
+            elements = elements.to_a
+          else
+            elements = [ elements ]
+          end
+        end
+
+        elements.flatten!
+
+        instance_variable_set(instance_var_name, elements)
       }
     end
   end
