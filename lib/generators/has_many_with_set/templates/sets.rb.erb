@@ -1,4 +1,5 @@
-<% set_items_table = "#{ child.singularize }_sets_#{ child.singularize }".tableize %><% set_table = "#{ child.singularize }_sets".tableize %>
+<% set_items_table = "#{ child.singularize }_sets_#{ child }".tableize %>
+<% set_table = "#{ child.singularize }_sets".tableize %>
 class <%= "Create#{ child.classify.singularize }Set" %> < ActiveRecord::Migration
   def change
     create_table :<%= set_table %> do |t|
@@ -7,13 +8,15 @@ class <%= "Create#{ child.classify.singularize }Set" %> < ActiveRecord::Migratio
 
     create_table :<%= set_items_table %> do |t|
       t.references :<%= set_table.singularize %>, :null => false
-      t.references :<%= child.tableize.singularize.downcase %>, :null => false
+      t.references :<%= child.tableize.singularize %>, :null => false
     end
 
     add_column :<%= parent.tableize %>, :<%= set_table.singularize %>_id, :integer
 
+    <% set_table_index_name = "index_#{ child.tableize.singularize.downcase }_#{ set_items_table }" %>
+    <% child_table_index_name = "index_#{ set_table.singularize.downcase }_#{ set_items_table }" %>
     add_index :<%= parent.tableize %>, :<%= set_table.singularize %>_id
-    add_index :<%= set_items_table.tableize %>, :<%= set_table.singularize %>_id
-    add_index :<%= set_items_table.tableize %>, :<%= child.tableize.singularize.downcase %>_id
+    add_index :<%= set_items_table %>, :<%= set_table.singularize %>_id, :name => :<%= set_table_index_name[0, 63] %>
+    add_index :<%= set_items_table %>, :<%= child.tableize.singularize %>_id, :name => :<%= child_table_index_name[0, 63] %>
   end
 end
