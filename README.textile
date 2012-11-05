@@ -1,4 +1,47 @@
-
-h1. has-many-with-sets
+h1. has-many-with-set
 
 h3. A smarter way of doing many-to-many relationships in Ruby On Rails.
+
+h2. Introduction
+
+Rails has two ways to model many-to-many relationships: *_has_and_belongs_to_many_* and *_has_many :through_*, this gem introduces a third one: *_has_many_with_set_*.
+
+*_has_many_with_set_* is equivalent to *_has_and_belongs_to_many_* in functionality. It works only when you do not want information about a relationship but the relationship itself, behind the curtains though, they do not work anything alike, *_has_many_with_set_* is far more efficient in terms of data size as it reduces the redundancy that occurs in a normal many-to-many relationship when the cardinality is low, that is, the same combination occurs many times. For example, in a blog application, when many posts share the same tags.
+
+h2. How so?
+
+The regular way of doing many-to-many relationships is using a join table to relate two tables, both ways of doing it in Ruby On Rails use this method, the only difference is the degree of control they give you on the "intermediary" table, one hides it from you (which is nice) and the other allows you to put more data in it besides the relationship, use validations, callbacks, etc.
+
+The _join_ table model is a very redundant way of storing these relationships if the same combination happens more than once because you have to create the same amount rows in the join table each time you save this combination for each different _parent_.
+
+For example:
+
+bc.. Tag.new(:name => "programming").save
+Tag.new(:name => "open source").save
+
+a = Article.new(:title => "Buzzwords about buzzwords", :body => "Lorem ipsum")
+a.tags << Tag.all
+a.save
+
+a = Article.new(:title => "More  buzzwords", :body => "Lorem ipsum")
+a.tags << Tag.all
+a.save
+
+ArticlesTags.count
+=> 4
+
+p. We get four rows, two for each tag in each article, if we had 1000 articles with these same two tags we would have 2000 rows in the relationship table, this example  (albeit a bit unrealistic) shows how redundant this is, even though we are using the same combination of tags over and over again we get more and more rows, if we are speaking about thousands it is not a big problem but when your databases grow to the hundreds of thousands or the millions, stuff like this starts to matter.
+
+This is what this gem fixes, it makes sure that when you create a combination of items, it is unique and it gets used as many times as its needed without creating more rows than were created the first time.
+
+*_has-many-with-set_* is here to help.
+
+h2. Installation
+
+*Rails 3.x*
+
+To use it, add it to your Gemfile:
+
+@gem 'has-many-with-set'@
+
+That's pretty much it!
