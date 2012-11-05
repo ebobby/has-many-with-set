@@ -16,7 +16,7 @@ module HasManyWithSet
               where c.#{ set_table_name.singularize }_id =
                     #{ set_items_table_name }.#{ set_table_name.singularize }_id) = ?
        group by #{ set_table_name }.id
-       having count(*) = ? "
+       having count(*) = ?"
     end
   end
 end

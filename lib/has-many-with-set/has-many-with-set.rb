@@ -9,15 +9,16 @@ module HasManyWithSet
   def build_set_relationship (parent_model_name, child_model_name)
     extend HasManyWithSet::Relationships
 
-    set_model_name = create_set_model(child_model_name)
-
+    parent_table_name    = parent_model_name.tableize
     child_table_name     = child_model_name.tableize
-    set_table_name       = set_model_name.tableize
+    set_table_name       = "#{ parent_table_name }_#{ child_table_name }_sets"
+    set_model_name       = set_table_name.classify
     set_items_table_name = "#{ set_table_name }_#{ child_table_name }"
     instance_var_name    = "@#{ child_table_name }"
 
-    relate_child_to_set(child_model_name)
-    relate_parent_to_set(parent_model_name, child_model_name)
+    create_set_model(set_model_name)
+    relate_child_to_set(set_model_name, child_model_name)
+    relate_parent_to_set(set_model_name, parent_model_name)
 
     setter_method_name              = "#{ child_table_name }="
     initialize_callback_method_name = "#{ set_items_table_name }_initialize_callback"
