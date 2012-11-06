@@ -16,19 +16,35 @@ The _join_ table model is a very redundant way of storing these relationships if
 
 For example:
 
-bc.. Tag.new(:name => "programming").save
-Tag.new(:name => "open source").save
+bc.. Tag.new(:name => 'programming').save
+Tag.new(:name => 'open source').save
+Tag.new(:name => 'startups').save
+Tag.new(:name => 'ruby').save
+Tag.new(:name => 'development').save
 
-100.times do
-  a = Article.new(:title => "Buzzwords about buzzwords", :body => "Lorem ipsum")
-  a.tags = Tag.all    # the usage is pretty similar to regular many to many relationships
+tags = Tag.all
+
+1000.times do
+  a = Article.new(:title => "Buzzword about buzzwords!",
+                  :body => "Lorem ipsum")
+
+  rand(tags.size + 1).times do
+    t = tags[rand(tags.size)]
+    a.tags << t
+  end
+
+  a.tags.uniq!
   a.save
 end
 
-ArticlesTags.count
- => 200
+ArticlesTags = Class.new(ActiveRecord::Base)
+ArticlesTags.count # this class doesn't exist by default,
+                   # I had to create it by hand for the example.
+=> 1932
 
-p. We get 200 rows, two for each tag in each article, if we had 1,000 articles with these same two tags we would have 2000 rows in the relationship table, this example  (albeit a bit unrealistic) shows how redundant this is, even though we are using the same combination of tags over and over again we get more and more rows, if we are speaking about thousands it is not a big problem but when your databases grow to the hundreds of thousands or the millions, stuff like this starts to matter.
+p. So we create five tags, and we create 1000 articles with a random combination of tags, not surprisingly, our join table has plenty of rows to represent all the relationships between our articles and their tags, if this were to behave linearly, if we had 1,000,000 articles we would have 1,932,000 rows just to represent the relationship.
+
+This example  (albeit a bit unrealistic) shows how redundant this is, even though we are using the same combination of tags over and over again we get more and more rows, if we are speaking about thousands it is not a big problem but when your databases grow to the hundreds of thousands or the millions, stuff like this starts to matter.
 
 This is what this gem fixes, it makes sure that when you create a combination of items it is unique and it gets used as many times as its needed when requested again, like a *set*.
 
@@ -71,25 +87,42 @@ bc.. class Article < ActiveRecord::Base
   has_many_with_set :tags   # <--- key part!
 end
 
-Tag.new(:name => "programming").save
-Tag.new(:name => "open source").save
+Tag.new(:name => 'programming').save
+Tag.new(:name => 'open source').save
+Tag.new(:name => 'startups').save
+Tag.new(:name => 'ruby').save
+Tag.new(:name => 'development').save
 
-100.times do
-  a = Article.new(:title => "Buzzwords about buzzwords", :body => "Lorem ipsum")
-  a.tags = Tag.all    # the usage is pretty similar to regular many to many relationships
+tags = Tag.all
+
+1000.times do
+  a = Article.new(:title => "Buzzword about buzzwords!",
+                  :body => "Lorem ipsum")
+
+  rand(tags.size + 1).times do
+    t = tags[rand(tags.size)]
+    a.tags << t
+  end
+
+  a.tags.uniq!
   a.save
 end
 
-ArticlesTagsSetsTag.count
-=> 2
+ArticlesTagsSetsTag = Class.new(ActiveRecord::Base)
+ArticlesTagsSetsTag.count # this class doesn't exist by default,
+                          # I had to create it by hand for the example.
+=> 80
 
 Article.first.tags
-=> [#<Tag id: 1, name: "programming", ...>, #<Tag id: 2, name: "open source", ...>]
+=> [#<Tag id: 1, name: "programming", ...>]
 
-Article.first.tags == Article.last.tags
-=> true
+Article.last.tags
+=> [#<Tag id: 1, name: "programming", ...>, #<Tag id: 5, name: "development", ...]
 
-p. As you can see, all articles are reusing the same set of tags and we are only saving a single set of rows.
+p. Same example as before, just now using *_has_many_with_set_*. We get the impressive number of 80 rows to represent the same information that we had before with thousands of rows (roughly the same, since we use random combinations is not _exactly_ the same article/tag layout).
+
+The funny thing in this particular example, is that since we have only five tags, there are only 32 possible ways to combine five tags together, these 32 combinations amount to 80 rows in our relationship table.... that is, even if we had a million articles we would still have the same 80 rows to represent our relationships, we don't need to create any more rows!!
+
 
 h2. Final remarks
 
