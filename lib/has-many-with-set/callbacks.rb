@@ -33,6 +33,7 @@ module HasManyWithSet
             set.save
           end
         else
+          values.flatten!
           values.each do |v| v.save if v.changed? end
 
           set = klass.find_by_sql([ find_set_query,
