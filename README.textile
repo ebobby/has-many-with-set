@@ -19,20 +19,18 @@ For example:
 bc.. Tag.new(:name => "programming").save
 Tag.new(:name => "open source").save
 
-a = Article.new(:title => "Buzzwords about buzzwords", :body => "Lorem ipsum")
-a.tags << Tag.all
-a.save
-
-a = Article.new(:title => "More  buzzwords", :body => "Lorem ipsum")
-a.tags << Tag.all
-a.save
+100.times do
+  a = Article.new(:title => "Buzzwords about buzzwords", :body => "Lorem ipsum")
+  a.tags = Tag.all    # the usage is pretty similar to regular many to many relationships
+  a.save
+end
 
 ArticlesTags.count
-=> 4
+ => 200
 
-p. We get four rows, two for each tag in each article, if we had 1000 articles with these same two tags we would have 2000 rows in the relationship table, this example  (albeit a bit unrealistic) shows how redundant this is, even though we are using the same combination of tags over and over again we get more and more rows, if we are speaking about thousands it is not a big problem but when your databases grow to the hundreds of thousands or the millions, stuff like this starts to matter.
+p. We get 200 rows, two for each tag in each article, if we had 1,000 articles with these same two tags we would have 2000 rows in the relationship table, this example  (albeit a bit unrealistic) shows how redundant this is, even though we are using the same combination of tags over and over again we get more and more rows, if we are speaking about thousands it is not a big problem but when your databases grow to the hundreds of thousands or the millions, stuff like this starts to matter.
 
-This is what this gem fixes, it makes sure that when you create a combination of items, it is unique and it gets used as many times as its needed without creating more rows than were created the first time.
+This is what this gem fixes, it makes sure that when you create a combination of items it is unique and it gets used as many times as its needed when requested again, like a *set*.
 
 *_has-many-with-set_* is here to help.
 
@@ -45,3 +43,66 @@ To use it, add it to your Gemfile:
 @gem 'has-many-with-set'@
 
 That's pretty much it!
+
+h2. Usage
+
+To to use *_has-many-with-set_* to relate two already existing models you have to create the underlying tables that are going to be used by it, this is very easily done by generating a migration for them:
+
+@rails generate has_many_with_set:migration PARENT CHILD@
+
+And add the relationship to your parent model:
+
+bc.. class Parent < ActiveRecord::Base
+  has_many_with_set :childs  # should be children but you know what I mean
+end
+
+p. And that's it! You can start using it in your application. This can be done for as many models as you want, (you have to create migrations for all combinations!) you can even use multiple sets to relate different data to the same parent model (like Authors and Tags for your Articles).
+
+h2. Example
+
+Using our previous example:
+
+bc. rails g has_many_with_set:migration Article Tag
+      create  db/migrate/20121106063326_create_articles_tags_set.rb
+
+bc.. class Article < ActiveRecord::Base
+  attr_accessible :body, :title
+
+  has_many_with_set :tags   # <--- key part!
+end
+
+Tag.new(:name => "programming").save
+Tag.new(:name => "open source").save
+
+100.times do
+  a = Article.new(:title => "Buzzwords about buzzwords", :body => "Lorem ipsum")
+  a.tags = Tag.all    # the usage is pretty similar to regular many to many relationships
+  a.save
+end
+
+ArticlesTagsSetsTag.count
+=> 2
+
+Article.first.tags
+=> [#<Tag id: 1, name: "programming", ...>, #<Tag id: 2, name: "open source", ...>]
+
+Article.first.tags == Article.last.tags
+=> true
+
+p. As you can see, all articles are reusing the same set of tags and we are only saving a single set of rows.
+
+h2. Final remarks
+
+Please keep in mind that *_has-many-with-set_* is not without some caveats:
+
+* It can only be used when you do not need to put extra information in the relationships rows since they are shared among many parents.
+* It is only effective when there is a high natural redundancy in your data, that is, when many sets can be shared among many parents.
+* Although the retrieval queries are the same as with regular *_has_and_belongs_to_many_* and have no extra cost, it does have a tiny bit of extra cost when saving or updating since we have to find or create a suitable set before actually saving the parent record to the database. This cost is probably negligible as opposed to writing all the time, but I can't say it's free.
+
+This is one humble attempt to help make Ruby On Rails a bit more useful with large data sets and applications, I hope you enjoy it and is useful to you, please email me with comments or suggestions (or even code!).
+
+h2. Author
+
+* Francisco Soto <ebobby@ebobby.org>
+
+Copyright © 2012 Francisco Soto (http://ebobby.org) released under the MIT license.
