@@ -26,24 +26,28 @@ module HasManyWithSet
         values = instance_variable_get(instance_var_name)
 
         if values.blank?
-          set = klass.find_by_sql(empty_set_query).first
+          ActiveRecord::Base.transaction do
+            set = klass.find_by_sql(empty_set_query).first
 
-          if set.nil?
-            set = klass.new
-            set.save
+            if set.nil?
+              set = klass.new
+              set.save
+            end
           end
         else
           values.flatten!
           values.each do |v| v.save if v.changed? end
 
-          set = klass.find_by_sql([ find_set_query,
-                                    values.map { |v| v.id },
-                                    values.size,
-                                    values.size ]).first
-          if set.nil?
-            set = klass.new
-            set.send(set_items_setter, values)
-            set.save
+          ActiveRecord::Base.transaction do
+            set = klass.find_by_sql([ find_set_query,
+                                      values.map { |v| v.id },
+                                      values.size,
+                                      values.size ]).first
+            if set.nil?
+              set = klass.new
+              set.send(set_items_setter, values)
+              set.save
+            end
           end
         end
 
