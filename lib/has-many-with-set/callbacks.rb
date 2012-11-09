@@ -1,16 +1,5 @@
 module HasManyWithSet
   module Callbacks
-    def self.build_loader_callback (instance_var_name, child_table_name, set_table_name)
-      set_table_id = "#{ set_table_name.singularize }_id"
-
-      Proc.new {
-        value = []
-        value = send(set_table_name.singularize).send(child_table_name).to_a unless send(set_table_id).nil?
-
-        instance_variable_set(instance_var_name, value)
-      }
-    end
-
     def self.build_saver_callback (set_table_name, set_items_table_name,
                                    child_table_name, instance_var_name)
       empty_set_query = Queries.build_find_empty_set_query(set_table_name, set_items_table_name)
@@ -23,7 +12,7 @@ module HasManyWithSet
 
       Proc.new {
         set = nil
-        values = instance_variable_get(instance_var_name)
+        values = send(child_table_name)
 
         if values.blank?
           ActiveRecord::Base.transaction do
