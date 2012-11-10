@@ -1,7 +1,5 @@
-require 'test_helper'
+require "test_helper"
 
-class HasManyWithSetTest < ActiveSupport::TestCase
-  test "truth" do
-    assert_kind_of Module, HasManyWithSet
-  end
+class MigrationGeneratorTest < Rails::Generators::TestCase
+  tests HasManyWithSet::MigrationGenerator
 end
