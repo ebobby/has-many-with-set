@@ -22,7 +22,7 @@ class PrepareActiveRecord
 
       require(file)
 
-      # I think this is horrendous but I don't want to hardcore the name of the class either.
+      # I think this is horrendous but I don't want to hardcode the name of the class either.
       loaded_klass = Module.constants.last
 
       Object.const_get(loaded_klass).new.change
