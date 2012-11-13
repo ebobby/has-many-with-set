@@ -123,8 +123,9 @@ p. Same example as before, just now using *_has_many_with_set_*. We get the impr
 
 The funny thing in this particular example, is that since we have only five tags, there are only 32 possible ways to combine five tags together, these 32 combinations amount to 80 rows in our relationship table.... that is, even if we had a million articles we would still have the same 80 rows to represent our relationships, we don't need to create any more rows!!
 
-
 h2. Final remarks
+
+If you want to read a detailed post about how this works and what this gem does with some useful diagrams and sample queries, you can check out this blog post : "Using sets for many-to-many-relationships":http://ebobby.org/2012/11/11/Using-Sets-For-Many-To-Many-Relationships.html.
 
 Please keep in mind that *_has-many-with-set_* is not without some caveats:
 
