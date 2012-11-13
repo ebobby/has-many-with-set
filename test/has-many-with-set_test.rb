@@ -98,6 +98,19 @@ class HasManyWithSetTest < ActiveSupport::TestCase
     end
   end
 
+  test "do not save repeated items" do
+    items = ModelTwo.all
+    master_record = ModelOne.new(:num => items.size)
+
+    master_record.model_twos = ModelTwo.all
+    master_record.model_twos << items
+    master_record.model_twos << items
+    master_record.model_twos << items
+    master_record.save
+
+    assert master_record.model_twos.size == items.size
+  end
+
   test "items count match" do
     ModelOne.all.each do |m|
       assert m.num == m.model_twos.size

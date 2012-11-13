@@ -36,7 +36,7 @@ module HasManyWithSet
           end
         end
 
-        elements.flatten!
+        elements = elements.flatten.uniq
 
         instance_variable_set(instance_var_name, elements)
       }

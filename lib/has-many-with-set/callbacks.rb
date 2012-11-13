@@ -24,7 +24,8 @@ module HasManyWithSet
             end
           end
         else
-          values.flatten!
+          values = values.flatten.uniq
+
           values.each do |v| v.save if v.changed? end
 
           ActiveRecord::Base.transaction do
@@ -37,6 +38,8 @@ module HasManyWithSet
               set.send(set_items_setter, values)
               set.save
             end
+
+            send(set_items_setter, values)
           end
         end
 
