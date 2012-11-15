@@ -16,11 +16,11 @@ The _join_ table model is a very redundant way of storing these relationships if
 
 For example:
 
-bc.. Tag.new(:name => 'programming').save
-Tag.new(:name => 'open source').save
-Tag.new(:name => 'startups').save
-Tag.new(:name => 'ruby').save
-Tag.new(:name => 'development').save
+bc.. Tag.create(:name => 'programming')
+Tag.create(:name => 'open source')
+Tag.create(:name => 'startups')
+Tag.create(:name => 'ruby')
+Tag.create(:name => 'development')
 
 tags = Tag.all
 
@@ -28,12 +28,8 @@ tags = Tag.all
   a = Article.new(:title => "Buzzword about buzzwords!",
                   :body => "Lorem ipsum")
 
-  rand(tags.size + 1).times do
-    t = tags[rand(tags.size)]
-    a.tags << t
-  end
+  a.tags = tags.sample(rand(tags.size + 1))
 
-  a.tags.uniq!
   a.save
 end
 
@@ -87,11 +83,11 @@ bc.. class Article < ActiveRecord::Base
   has_many_with_set :tags   # <--- key part!
 end
 
-Tag.new(:name => 'programming').save
-Tag.new(:name => 'open source').save
-Tag.new(:name => 'startups').save
-Tag.new(:name => 'ruby').save
-Tag.new(:name => 'development').save
+Tag.create(:name => 'programming')
+Tag.create(:name => 'open source')
+Tag.create(:name => 'startups')
+Tag.create(:name => 'ruby')
+Tag.create(:name => 'development')
 
 tags = Tag.all
 
@@ -99,12 +95,8 @@ tags = Tag.all
   a = Article.new(:title => "Buzzword about buzzwords!",
                   :body => "Lorem ipsum")
 
-  rand(tags.size + 1).times do
-    t = tags[rand(tags.size)]
-    a.tags << t
-  end
+  a.tags = tags.sample(rand(tags.size + 1))
 
-  a.tags.uniq!
   a.save
 end
 
