@@ -32,6 +32,10 @@ class HasManyWithSetTest < ActiveSupport::TestCase
     assert_respond_to ModelOne.new, "model_twos="
   end
 
+  test "child class has the getter" do
+    assert_respond_to ModelTwo.new, "model_ones"
+  end
+
   test "getter type" do
     assert_kind_of Array, ModelOne.new.model_twos
   end
@@ -109,6 +113,20 @@ class HasManyWithSetTest < ActiveSupport::TestCase
     master_record.save
 
     assert master_record.model_twos.size == items.size
+  end
+
+  test "children can see parents" do
+    item = ModelTwo.create
+
+    how_many = rand(50)
+
+    how_many.times do
+      record = ModelOne.new(:num => 1)
+      record.model_twos << item
+      record.save
+    end
+
+    assert item.model_ones.size == how_many, "#{ item.model_ones.size } != #{ how_many }"
   end
 
   test "items count match" do
