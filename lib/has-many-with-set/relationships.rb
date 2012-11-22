@@ -13,7 +13,7 @@ module HasManyWithSet
 
       # ... and take the Set model and finish the many-to-many relationship.
       Object.const_get(set_model_name).class_eval do
-        has_and_belongs_to_many child_model_name.tableize.to_sym
+        has_and_belongs_to_many child_model_name.tableize.to_sym, :join_table => "#{ set_model_name.underscore.pluralize }_#{ child_model_name.pluralize }"
       end
     end
 
