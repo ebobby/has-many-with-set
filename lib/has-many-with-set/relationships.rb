@@ -8,12 +8,12 @@ module HasManyWithSet
     def self.relate_child_to_set (set_model_name, child_model_name)
       # Take the child model and add a regular many-to-many relationship to the Set model...
       Object.const_get(child_model_name).class_eval do
-        has_and_belongs_to_many set_model_name.tableize.to_sym
+        has_and_belongs_to_many set_model_name.tableize.to_sym, :join_table => "#{ set_model_name.tableize }_#{ child_model_name.tableize }"
       end
 
       # ... and take the Set model and finish the many-to-many relationship.
       Object.const_get(set_model_name).class_eval do
-        has_and_belongs_to_many child_model_name.tableize.to_sym
+        has_and_belongs_to_many child_model_name.tableize.to_sym, :join_table => "#{ set_model_name.tableize }_#{ child_model_name.tableize }"
       end
     end
 
