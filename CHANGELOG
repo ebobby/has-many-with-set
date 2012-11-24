@@ -1,0 +1,6 @@
+has-many-with-set 1.1.0
+
+- Children can now see their parents.
+- The README now uses Ruby 1.9 features.
+- Fixed a bug with the relationships table. By default, Rails name has_and_belongs_to_many relationship tables in alphabetical order. This breaks the save callback if your parent > child.
+- Added CHANGELOG.
