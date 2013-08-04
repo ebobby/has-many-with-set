@@ -4,6 +4,8 @@ h3. A smarter way of doing many-to-many relationships in Ruby On Rails.
 
 h2. Introduction
 
+*Update: Now works with Rails 4*
+
 Rails has two ways to model many-to-many relationships: *_has_and_belongs_to_many_* and *_has_many :through_*, this gem introduces a third one: *_has_many_with_set_*.
 
 *_has_many_with_set_* is equivalent to *_has_and_belongs_to_many_* in functionality. It works only when you do not want information about a relationship but the relationship itself, behind the curtains though, they do not work anything alike, *_has_many_with_set_* is far more efficient in terms of data size as it reduces the redundancy that occurs in a normal many-to-many relationship when the cardinality is low, that is, the same combination occurs many times. For example, in a blog application, when many posts share the same tags.
@@ -74,12 +76,14 @@ h2. Example
 
 Using our previous example:
 
+bc. rails g model Article title:string body:text
+
+bc. rails g model Tag name:string
+
 bc. rails g has_many_with_set:migration Article Tag
       create  db/migrate/20121106063326_create_articles_tags_set.rb
 
 bc.. class Article < ActiveRecord::Base
-  attr_accessible :body, :title
-
   has_many_with_set :tags   # <--- key part!
 end
 
@@ -116,7 +120,7 @@ Article.last.tags
 Tag.first.articles.size
 => 503
 
-Tag.first.article.first
+Tag.first.articles.first
 => #<Article id: 2, title: "Buzzword about buzzwords!", ..>
 
 p. Same example as before, just now using *_has_many_with_set_*. We get the impressive number of 80 rows to represent the same information that we had before with thousands of rows (roughly the same, since we use random combinations is not _exactly_ the same article/tag layout).
