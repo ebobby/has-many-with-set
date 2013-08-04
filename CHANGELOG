@@ -1,3 +1,10 @@
+has-many-with-set 1.2.0
+
+- Updated gemspec so the gem works with Rails 4.*.
+- The README examples don't use attr_accessible.
+- The README example now includes the code to create Article and Tag. No assumptions made.
+- Fixed the tests so they run on Rails 4.0.
+
 has-many-with-set 1.1.0
 
 - Children can now see their parents.
