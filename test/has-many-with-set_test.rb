@@ -18,12 +18,17 @@ class MigrationGeneratorTest < Rails::Generators::TestCase
   end
 end
 
-# Migration test has to run first, I do not like that but is the only way to actually
-# test the whole thing.
-PrepareActiveRecord.prepare_default_schema
-PrepareActiveRecord.run_migration(MIGRATION_FILE, MIGRATION_PATH)
-
 class HasManyWithSetTest < ActiveSupport::TestCase
+  def setup
+    unless @initialized
+      # Migration test has to run first, I do not like that but is the only way to actually
+      # test the whole thing.
+      PrepareActiveRecord.prepare_default_schema
+      PrepareActiveRecord.run_migration(MIGRATION_FILE, MIGRATION_PATH)
+      @initialized = true
+    end
+  end
+
   test "parent class has the getter" do
     assert_respond_to ModelOne.new, "model_twos"
   end
