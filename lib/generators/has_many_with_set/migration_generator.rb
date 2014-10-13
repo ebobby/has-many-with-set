@@ -3,6 +3,7 @@ require 'rails/generators'
 module HasManyWithSet
   class MigrationGenerator < Rails::Generators::Base
     include Rails::Generators::Migration
+
     source_root File.expand_path('../templates', __FILE__)
 
     def self.next_migration_number(path)
@@ -17,7 +18,7 @@ module HasManyWithSet
     attr_accessor :parent, :child
 
     desc "This generates the migration file needed for a has_many_with_set relationship."
-    def create_migration
+    def create_migration_file
       @parent_table = parent.tableize
       @child_table = child.tableize
       @set_table = "#{ @parent_table }_#{ @child_table }_sets"
