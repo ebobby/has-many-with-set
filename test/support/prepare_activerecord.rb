@@ -18,14 +18,9 @@ class PrepareActiveRecord
     end
 
     def run_migration(relative, root)
-      file = migration_file_name(relative, root)
+      require(migration_file_name(relative, root))
 
-      require(file)
-
-      # I think this is horrendous but I don't want to hardcode the name of the class either.
-      loaded_klass = Module.constants.last
-
-      Object.const_get(loaded_klass).new.change
+      CreateModelOnesModelTwosSet.new.change
     end
 
     private

@@ -5,6 +5,8 @@ CHILD  = "ModelTwo"
 MIGRATION_PATH = "test/tmp/"
 MIGRATION_FILE = "db/migrate/create_model_ones_model_twos_set"
 
+PrepareActiveRecord.prepare_default_schema
+
 class MigrationGeneratorTest < Rails::Generators::TestCase
   tests HasManyWithSet::MigrationGenerator
 
@@ -17,6 +19,8 @@ class MigrationGeneratorTest < Rails::Generators::TestCase
     assert_migration MIGRATION_FILE
   end
 end
+
+PrepareActiveRecord.run_migration(MIGRATION_FILE, MIGRATION_PATH)
 
 class HasManyWithSetTest < ActiveSupport::TestCase
   def setup
