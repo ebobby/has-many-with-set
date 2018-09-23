@@ -69,7 +69,7 @@ To to use *_has-many-with-set_* to relate two already existing models you have t
 And add the relationship to your parent model:
 
 ```
-class Parent < ActiveRecord::Base
+class Parent < ApplicationRecord
   has_many_with_set :children
 end
 ```
@@ -109,7 +109,7 @@ tags = Tag.all
   a.save
 end
 
-ArticlesTagsSetsTag = Class.new(ActiveRecord::Base)
+ArticlesTagsSetsTag = Class.new(ApplicationRecord)
 ArticlesTagsSetsTag.count # this class doesn't exist by default,
                           # I had to create it by hand for the example.
 => 80
