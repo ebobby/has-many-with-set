@@ -19,7 +19,7 @@ module HasManyWithSet
        having count(*) = ?;"
     end
 
-    def self.build_find_parents_query (parent_table_name, child_table_name, set_table_name, set_items_table_name)
+    def self.build_find_parents_query(parent_table_name, child_table_name, set_table_name, set_items_table_name)
      "select #{ parent_table_name }.* from #{ child_table_name }
         join #{ set_items_table_name } on #{ child_table_name }.id = #{ set_items_table_name }.#{ child_table_name.singularize }_id
         join #{ parent_table_name } on #{ parent_table_name }.#{ set_table_name.singularize }_id =
