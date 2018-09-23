@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
   s.summary     = "A smarter way of doing many-to-many relationships in Rails."
   s.description = "A smarter way of doing many-to-many relationships in Rails."
 
-  s.files = Dir["{app,config,db,lib}/**/*"] + ["MIT-LICENSE", "Rakefile", "README.textile", "CHANGELOG" ]
+  s.files = Dir["{app,config,db,lib}/**/*"] + ["MIT-LICENSE", "Rakefile", "README.md", "CHANGELOG" ]
   s.test_files = Dir["test/**/*"]
 
   s.add_dependency "rails", "~> 5"
