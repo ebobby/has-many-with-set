@@ -6,29 +6,29 @@ class PrepareActiveRecord
       ActiveRecord::Schema.define do
         self.verbose = false
 
-        create_table :model_ones do |t|
+        create_table :ones do |t|
           t.integer :num
           t.timestamps
         end
 
-        create_table :model_twos do |t|
+        create_table :twos do |t|
           t.timestamps
         end
       end
     end
 
-    def run_migration(relative, root)
-      require(migration_file_name(relative, root))
+    def run_migration(parent, child)
+      generator = HasManyWithSet::MigrationGenerator.new([parent, child])
+      generator.destination_root = Dir.tmpdir
 
-      CreateModelOnesModelTwosSet.new.change
-    end
+      migration_path = generator.create_migration_file
+      migration_file = File.join(Dir.tmpdir, migration_path)
 
-    private
+      require(migration_file)
 
-    def migration_file_name(relative, root)
-      absolute = File.expand_path(relative, root)
-      dirname, file_name = File.dirname(absolute), File.basename(absolute).sub(/\.rb$/, '')
-      Dir.glob("#{dirname}/[0-9]*_*.rb").grep(/\d+_#{file_name}.rb$/).first
+      CreateOnesTwosSet.new.change
+
+      File.delete(migration_file)
     end
   end
 end
