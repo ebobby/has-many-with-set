@@ -36,9 +36,9 @@ tags = Tag.all
   a.save
 end
 
-ArticlesTagsSetsTag = Class.new(ApplicationRecord)
-ArticlesTagsSetsTag.count # this class doesn't exist by default,
-                          # I had to create it by hand for the example.
+ArticlesTags = Class.new(ApplicationRecord)
+ArticlesTags.count # this class doesn't exist by default,
+                   # I had to create it by hand for the example.
 => 1932
 ```
 
