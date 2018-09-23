@@ -1,6 +1,10 @@
-class ModelTwo < ActiveRecord::Base
+class ApplicationRecord < ActiveRecord::Base
+  self.abstract_class = true
 end
 
-class ModelOne < ActiveRecord::Base
-  has_many_with_set :model_two
+class Two < ApplicationRecord
+end
+
+class One < ApplicationRecord
+  has_many_with_set :two
 end

@@ -1,9 +1,9 @@
 require "test_helper"
 
-PARENT = "ModelOne"
-CHILD  = "ModelTwo"
+PARENT = "One"
+CHILD  = "Two"
 MIGRATION_PATH = "test/tmp/"
-MIGRATION_FILE = "db/migrate/create_model_ones_model_twos_set"
+MIGRATION_FILE = "db/migrate/create_ones_twos_set"
 
 PrepareActiveRecord.prepare_default_schema
 
@@ -20,127 +20,120 @@ class MigrationGeneratorTest < Rails::Generators::TestCase
   end
 end
 
-PrepareActiveRecord.run_migration(MIGRATION_FILE, MIGRATION_PATH)
-
 class HasManyWithSetTest < ActiveSupport::TestCase
   def setup
-    unless @initialized
-      # Migration test has to run first, I do not like that but is the only way to actually
-      # test the whole thing.
-      PrepareActiveRecord.prepare_default_schema
-      PrepareActiveRecord.run_migration(MIGRATION_FILE, MIGRATION_PATH)
-      @initialized = true
-    end
+    PrepareActiveRecord.prepare_default_schema
+    PrepareActiveRecord.run_migration(PARENT, CHILD)
   end
 
   test "parent class has the getter" do
-    assert_respond_to ModelOne.new, "model_twos"
+    assert_respond_to One.new, "twos"
   end
 
   test "parent class has the setter" do
-    assert_respond_to ModelOne.new, "model_twos="
+    assert_respond_to One.new, "twos="
   end
 
   test "child class has the getter" do
-    assert_respond_to ModelTwo.new, "model_ones"
+    assert_respond_to Two.new, "ones"
   end
 
   test "getter type" do
-    assert_kind_of Array, ModelOne.new.model_twos
+    assert_kind_of Array, One.new.twos
   end
 
   test "children can be saved" do
     15.times do
-      assert ModelTwo.new.save
+      assert Two.new.save
     end
 
-    assert (ModelTwo.all.size == 15)
+    assert (Two.all.size == 15)
   end
 
   test "parent saved with empty set" do
-    assert ModelOne.new(:num => 0).save
-    assert ModelOne.last.model_twos.size == 0
+    assert One.new(:num => 0).save
+    assert One.last.twos.size == 0
   end
 
   test "parent saved with non-empty set" do
-    record = ModelOne.new
-    record.model_twos = ModelTwo.all
-    record.num = record.model_twos.size
+    record = One.new
+    record.twos = Two.all
+    record.num = record.twos.size
     assert record.save
 
-    record = ModelOne.find(record.id)
-    assert record.num == record.model_twos.size
+    record = One.find(record.id)
+    assert record.num == record.twos.size
   end
 
   test "parent saved with several children" do
-    ModelTwo.all.each do |m|
-      record = ModelOne.new(:num => 1)
-      record.model_twos << m
+    Two.all.each do |m|
+      record = One.new(:num => 1)
+      record.twos << m
       assert record.save
 
-      record = ModelOne.find(record.id)
-      assert record.num == record.model_twos.size
+      record = One.find(record.id)
+      assert record.num == record.twos.size
     end
   end
 
   test "set reuse" do
-    items = ModelTwo.all
+    items = Two.all
 
     25.times do
-      master_record = ModelOne.new
+      master_record = One.new
 
       rand(items.size + 1).times do
-        master_record.model_twos << items[rand(items.size)]
+        master_record.twos << items[rand(items.size)]
       end
 
-      master_record.num = master_record.model_twos.size
+      master_record.num = master_record.twos.size
       master_record.save
 
-      master_items = master_record.model_twos
+      master_items = master_record.twos
 
-      set_id = master_record.send("model_ones_model_twos_set_id")
+      set_id = master_record.send(:ones_twos_set_id)
 
       100.times do
-        record = ModelOne.new(:num => master_items.size)
-        record.model_twos = master_items
+        record = One.new(:num => master_items.size)
+        record.twos = master_items
         record.save
 
-        assert(record.send("model_ones_model_twos_set_id") == set_id,
-               "Set ids do not match #{ record.send('model_ones_model_twos_set_id') } == #{ set_id }")
+        assert(record.send(:ones_twos_set_id) == set_id,
+               "Set ids do not match #{ record.send(:ones_twos_set_id) } == #{ set_id }")
       end
     end
   end
 
   test "do not save repeated items" do
-    items = ModelTwo.all
-    master_record = ModelOne.new(:num => items.size)
+    items = Two.all
+    master_record = One.new(:num => items.size)
 
-    master_record.model_twos = ModelTwo.all
-    master_record.model_twos << items
-    master_record.model_twos << items
-    master_record.model_twos << items
+    master_record.twos = Two.all
+    master_record.twos << items
+    master_record.twos << items
+    master_record.twos << items
     master_record.save
 
-    assert master_record.model_twos.size == items.size
+    assert master_record.twos.size == items.size
   end
 
   test "children can see parents" do
-    item = ModelTwo.create
+    item = Two.create
 
     how_many = rand(50)
 
     how_many.times do
-      record = ModelOne.new(:num => 1)
-      record.model_twos << item
+      record = One.new(:num => 1)
+      record.twos << item
       record.save
     end
 
-    assert item.model_ones.size == how_many, "#{ item.model_ones.size } != #{ how_many }"
+    assert item.ones.size == how_many, "#{ item.ones.size } != #{ how_many }"
   end
 
   test "items count match" do
-    ModelOne.all.each do |m|
-      assert m.num == m.model_twos.size
+    One.all.each do |m|
+      assert m.num == m.twos.size
     end
   end
 end
