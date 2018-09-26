@@ -8,9 +8,9 @@
 
 *This technique is explained with more detail in this [post](https://ebobby.org/2018/09/25/using-sets-for-many-to-many-relationships/).*
 
-Rails has two ways to model many-to-many relationships: *_has_and_belongs_to_many_* and *_has_many :through_*, this gem introduces a third one: *_has_many_with_set_*.
+Rails has two ways to model many-to-many relationships: `has_and_belongs_to_many` and `has_many :through`, this gem introduces a third one: `has_many_with_set`.
 
-*_has_many_with_set_* is equivalent to *_has_and_belongs_to_many_* in functionality. It works only when you do not want information about a relationship but the relationship itself, behind the curtains though, they do not work anything alike, *_has_many_with_set_* is far more efficient in terms of data size as it reduces the redundancy that occurs in a normal many-to-many relationship when the cardinality is low, that is, the same combination occurs many times. For example, in a blog application, when many posts share the same tags.
+`has_many_with_set` is equivalent to `has_and_belongs_to_many` in functionality. It works only when you do not want information about a relationship but the relationship itself, behind the curtains though, they do not work anything alike, `has_many_with_set` is far more efficient in terms of data size as it reduces the redundancy that occurs in a normal many-to-many relationships when the cardinality is low, that is, the same combination occurs many times. For example, in a blog application, when many posts share the same tags.
 
 ## How so?
 
@@ -50,11 +50,11 @@ This example  (albeit a bit unrealistic) shows how redundant this is, even thoug
 
 This is what this gem fixes, it makes sure that when you create a combination of items it is unique and it gets used as many times as its needed when requested again, like a *set*.
 
-*_has-many-with-set_* is here to help.
+`has-many-with-set` is here to help.
 
 ## Installation
 
-*Rails 3.x*
+*Rails 5.x*
 
 To use it, add it to your Gemfile:
 
@@ -64,7 +64,7 @@ That's pretty much it!
 
 ## Usage
 
-To to use *_has-many-with-set_* to relate two already existing models you have to create the underlying tables that are going to be used by it, this is very easily done by generating a migration for them:
+To to use `has-many-with-set` to relate two already existing models you have to create the underlying tables that are going to be used by it, this is very easily done by generating a migration for them:
 
 `rails generate has_many_with_set:migration PARENT CHILD`
 
@@ -132,17 +132,17 @@ Tag.first.articles.first
 
 ```
 
-Same example as before, just now using *_has_many_with_set_*. We get the impressive number of 80 rows to represent the same information that we had before with thousands of rows (roughly the same, since we use random combinations is not _exactly_ the same article/tag layout).
+Same example as before, just now using `has_many_with_set`. We get the impressive number of 80 rows to represent the same information that we had before with thousands of rows (roughly the same, since we use random combinations is not _exactly_ the same article/tag layout).
 
 The funny thing in this particular example, is that since we have only five tags, there are only 32 possible ways to combine five tags together, these 32 combinations amount to 80 rows in our relationship table.... that is, even if we had a million articles we would still have the same 80 rows to represent our relationships, we don't need to create any more rows!!
 
 ## Final remarks
 
-Please keep in mind that *_has-many-with-set_* is not without some caveats:
+Please keep in mind that `has-many-with-set` is not without some caveats:
 
 * It can only be used when you do not need to put extra information in the relationships rows since they are shared among many parents.
 * It is only effective when there is a high natural redundancy in your data, that is, when many sets can be shared among many parents.
-* Although the retrieval queries are the same as with regular *_has_and_belongs_to_many_* and have no extra cost, it does have a tiny bit of extra cost when saving or updating since we have to find or create a suitable set before actually saving the parent record to the database. This cost is probably negligible as opposed to writing all the time, but I can't say it's free.
+* Although the retrieval queries are the same as with regular `has_and_belongs_to_many` and have no extra cost, it does have a tiny bit of extra cost when saving or updating since we have to find or create a suitable set before actually saving the parent record to the database. This cost is probably negligible as opposed to writing all the time, but I can't say it's free.
 
 This is one humble attempt to help make Ruby On Rails a bit more useful with large data sets and applications, I hope you enjoy it and is useful to you, please email me with comments or suggestions (or even code!).
 
