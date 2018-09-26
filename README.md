@@ -5,6 +5,7 @@
 ## Introduction
 
 *Update: Now works with Rails 5*
+
 *This technique is explained with more detail in this [post](https://ebobby.org/2018/09/25/using-sets-for-many-to-many-relationships/).*
 
 Rails has two ways to model many-to-many relationships: *_has_and_belongs_to_many_* and *_has_many :through_*, this gem introduces a third one: *_has_many_with_set_*.
